@@ -1,0 +1,52 @@
+{{/* My Project Timeline Hugo Blox */}}
+{{/* https://github.com/Jajaho/project-timeline */}}
+
+{{/* Initialise the block */}}
+{{ $page := .wcPage }}
+{{ $block := .wcBlock }}
+
+{{/* Your Hugo variables */}}
+{{/* Access custom front matter content via `$block.content`. */}}
+{{/* E.g. access a `title` field via `$block.content.title`. */}}
+{{/* Pipe the field to `$page.RenderString` to parse it as Markdown. */}}
+{{ $title := $block.content.title | $page.RenderString }}
+{{ $text := $block.content.text | $page.RenderString }}
+{{ $projects := where site.RegularPages "Type" "project" }}
+
+{{/* Add your block layout below */}}
+{{/* Styles (in the form of vanilla CSS) can be added to the CSS file. */}}
+{{/* Tailwind styles can optionally be used with the extra step of compiling Tailwind. */}}
+{{/* Access custom front matter design options via `$block.design`. */}}
+{{/* E.g. access a `show_title` field via `$block.design.show_title`. */}}
+
+<div class="flex flex-col items-center max-w-prose mx-auto gap-3 justify-center">
+
+  <div class="mermaid">
+  gantt
+      title Project Timeline
+      dateFormat YYYY-MM-DD
+      axisFormat %Y-%m-%d
+      {{ range $projects }}
+          {{- if and (isset .Params "startdate") (isset .Params "enddate") -}}
+              {{- $title := .Title | replaceRE "[^a-zA-Z0-9]" "_" -}}
+              {{- printf "    %s : %s, %s\n" $title .Params.startDate .Params.endDate -}}
+          {{- end -}}
+      {{ end }}
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      if (window.mermaid) {
+          mermaid.initialize({
+              theme: 'default',
+              gantt: {
+                  barHeight: 40,
+                  barGap: 8,
+                  topPadding: 75,
+                  sidePadding: 75
+              }
+          });
+      }
+  });
+  </script>
